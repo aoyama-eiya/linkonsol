@@ -13,7 +13,8 @@ export interface ProfileData {
     bio: string;
     avatar: string; // Base64 or URL
     links: LinkItem[];
-    theme: 'light' | 'dark' | 'monochrome' | 'solana' | 'midnight' | 'bubblegum' | 'synthwave' | 'lavender';
+    theme: 'light' | 'dark' | 'monochrome' | 'solana' | 'midnight' | 'bubblegum' | 'synthwave' | 'lavender' | 'brand' | 'space_1' | 'space_2' | 'sunset' | 'pop' | 'wafu';
+    backgroundImage?: string;
     walletAddress?: string;
     isPrivate: boolean;
     passwordHash?: string; // SHA256 hash of the password for private profiles

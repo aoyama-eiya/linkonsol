@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from "react";
 import { ProfileData, LinkItem, SocialPlatform } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, Palette, Link as LinkIcon, Trash2, Settings, Globe, Save, RefreshCw } from "lucide-react";
+import { X, Plus, Palette, Link as LinkIcon, Trash2, Settings, Globe, Save, RefreshCw, Upload, ArrowUp, ArrowDown } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 import clsx from "clsx";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
@@ -98,6 +98,30 @@ export const ToolsDrawer: FC<ToolsDrawerProps> = ({ isOpen, onClose, data, onCha
         });
     };
 
+    const moveLink = (id: string, direction: 'up' | 'down') => {
+        const index = data.links.findIndex(l => l.id === id);
+        if (index === -1) return;
+        if (direction === 'up' && index === 0) return;
+        if (direction === 'down' && index === data.links.length - 1) return;
+
+        const newLinks = [...data.links];
+        const swapIndex = direction === 'up' ? index - 1 : index + 1;
+        [newLinks[index], newLinks[swapIndex]] = [newLinks[swapIndex], newLinks[index]];
+
+        onChange({ ...data, links: newLinks });
+    };
+
+    const handleBgUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                onChange({ ...data, backgroundImage: reader.result as string });
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const removeLink = (id: string) => {
         onChange({
             ...data,
@@ -186,6 +210,14 @@ export const ToolsDrawer: FC<ToolsDrawerProps> = ({ isOpen, onClose, data, onCha
                                                         <Trash2 size={16} />
                                                     </button>
                                                 </div>
+                                                <div className="flex gap-2 justify-end -mt-2 mb-2">
+                                                    <button onClick={() => moveLink(link.id, 'up')} disabled={data.links.indexOf(link) === 0} className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-20">
+                                                        <ArrowUp size={14} />
+                                                    </button>
+                                                    <button onClick={() => moveLink(link.id, 'down')} disabled={data.links.indexOf(link) === data.links.length - 1} className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-20">
+                                                        <ArrowDown size={14} />
+                                                    </button>
+                                                </div>
                                                 <input
                                                     type="text"
                                                     value={link.url}
@@ -217,30 +249,62 @@ export const ToolsDrawer: FC<ToolsDrawerProps> = ({ isOpen, onClose, data, onCha
 
                             {/* DESIGN TAB */}
                             {activeTab === 'design' && (
-                                <div className="grid grid-cols-2 gap-3">
-                                    {['light', 'dark', 'monochrome', 'solana', 'midnight', 'bubblegum', 'synthwave', 'lavender'].map((t) => (
-                                        <button
-                                            key={t}
-                                            onClick={() => onChange({ ...data, theme: t as any })}
-                                            className={clsx(
-                                                "p-4 rounded-2xl border-2 text-left transition-all relative overflow-hidden h-24 shadow-sm",
-                                                data.theme === t ? "border-purple-500 ring-2 ring-purple-500/20" : "border-gray-200 dark:border-zinc-800"
-                                            )}
-                                        >
-                                            <span className="capitalize font-bold z-10 relative drop-shadow-md text-sm">{t}</span>
-                                            <div className={clsx(
-                                                "absolute inset-0 transition-opacity",
-                                                t === 'light' ? "bg-gray-100" :
-                                                    t === 'dark' ? "bg-gray-900 text-white" :
-                                                        t === 'monochrome' ? "bg-zinc-200" :
-                                                            t === 'solana' ? "bg-gradient-to-br from-purple-500 to-indigo-500" :
-                                                                t === 'midnight' ? "bg-black text-white" :
-                                                                    t === 'bubblegum' ? "bg-gradient-to-br from-pink-300 to-purple-400" :
-                                                                        t === 'synthwave' ? "bg-gradient-to-b from-indigo-900 to-pink-800" :
-                                                                            "bg-[#E6E6FA]"
-                                            )} />
-                                        </button>
-                                    ))}
+                                <div className="space-y-6">
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {['light', 'dark', 'monochrome', 'brand', 'solana', 'midnight', 'space_1', 'space_2', 'sunset', 'bubblegum', 'synthwave', 'pop', 'lavender', 'wafu'].map((t) => (
+                                            <button
+                                                key={t}
+                                                onClick={() => onChange({ ...data, theme: t as any })}
+                                                className={clsx(
+                                                    "p-4 rounded-2xl border-2 text-left transition-all relative overflow-hidden h-24 shadow-sm",
+                                                    data.theme === t ? "border-purple-500 ring-2 ring-purple-500/20" : "border-gray-200 dark:border-zinc-800"
+                                                )}
+                                            >
+                                                <span className={clsx(
+                                                    "capitalize font-bold z-10 relative drop-shadow-md text-sm",
+                                                    (t === 'light' || t === 'monochrome' || t === 'lavender' || t === 'brand' || t === 'pop' || t === 'wafu') ? "text-gray-900" : "text-white"
+                                                )}>{t.replace('_', ' ')}</span>
+                                                <div className={clsx(
+                                                    "absolute inset-0 transition-opacity",
+                                                    t === 'light' ? "bg-gray-100" :
+                                                        t === 'dark' ? "bg-gray-900" :
+                                                            t === 'monochrome' ? "bg-zinc-200" :
+                                                                t === 'brand' ? "bg-white border-2 border-gray-100" :
+                                                                    t === 'solana' ? "bg-gradient-to-br from-purple-500 to-indigo-500" :
+                                                                        t === 'midnight' ? "bg-black" :
+                                                                            t === 'space_1' ? "bg-[#0b0d17]" :
+                                                                                t === 'space_2' ? "bg-gray-900" :
+                                                                                    t === 'sunset' ? "bg-gradient-to-b from-orange-400 to-rose-400" :
+                                                                                        t === 'bubblegum' ? "bg-gradient-to-br from-pink-300 to-purple-400" :
+                                                                                            t === 'synthwave' ? "bg-gradient-to-b from-indigo-900 to-pink-800" :
+                                                                                                t === 'pop' ? "bg-yellow-300" :
+                                                                                                    t === 'wafu' ? "bg-[#d4cfc0]" :
+                                                                                                        "bg-[#E6E6FA]"
+                                                )} />
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    <div className="pt-4 border-t border-gray-100 dark:border-zinc-800">
+                                        <h3 className="text-sm font-bold opacity-70 mb-3 block">Background Image</h3>
+                                        {data.backgroundImage && (
+                                            <div className="relative w-full h-32 rounded-xl overflow-hidden mb-3 border border-gray-200">
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                <img src={data.backgroundImage} alt="Background" className="w-full h-full object-cover" />
+                                                <button
+                                                    onClick={() => onChange({ ...data, backgroundImage: '' })}
+                                                    className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full hover:bg-red-500 transition-colors"
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                            </div>
+                                        )}
+                                        <label className="flex items-center justify-center w-full p-4 border-2 border-dashed border-gray-300 dark:border-zinc-700 rounded-xl cursor-pointer hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/10 transition-all gap-2 text-sm font-medium opacity-70 hover:opacity-100">
+                                            <Upload size={18} />
+                                            <span>Upload Background</span>
+                                            <input type="file" accept="image/*" onChange={handleBgUpload} className="hidden" />
+                                        </label>
+                                    </div>
                                 </div>
                             )}
 
