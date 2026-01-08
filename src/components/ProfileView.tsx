@@ -83,6 +83,12 @@ export const ProfileView: FC<ProfileViewProps> = ({ data, isPreview = false, isE
         bubblegum: "bg-gradient-to-br from-pink-300 to-purple-400 text-white",
         synthwave: "bg-gradient-to-b from-indigo-900 via-purple-900 to-pink-800 text-cyan-300",
         lavender: "bg-[#E6E6FA] text-slate-800",
+        brand: "bg-white text-gray-900",
+        space_1: "bg-[#0b0d17] text-white",
+        space_2: "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-gray-900 to-black text-white",
+        sunset: "bg-gradient-to-b from-orange-400 to-rose-400 text-white",
+        pop: "bg-yellow-300 text-black",
+        wafu: "bg-[#2c2c2c] text-[#d4cfc0]", // Japanese dark aesthetics
     };
 
     const buttonClasses = {
@@ -94,144 +100,165 @@ export const ProfileView: FC<ProfileViewProps> = ({ data, isPreview = false, isE
         bubblegum: "bg-white/30 hover:bg-white/50 backdrop-blur-sm text-white border-2 border-white/40 shadow-sm",
         synthwave: "bg-black/40 hover:bg-black/60 backdrop-blur-md text-cyan-400 border border-pink-500 shadow-[0_0_10px_rgba(255,0,228,0.3)] hover:shadow-[0_0_20px_rgba(255,0,228,0.6)]",
         lavender: "bg-white hover:bg-[#F0F0FF] text-slate-700 border border-slate-200 shadow-sm",
+        brand: "bg-black text-white border-2 border-transparent hover:bg-gray-800",
+        space_1: "bg-blue-900/30 text-cyan-200 border border-cyan-500/50 hover:bg-blue-900/50 shadow-[0_0_15px_rgba(0,255,255,0.2)]",
+        space_2: "bg-white/10 text-white border border-white/20 hover:bg-white/20 backdrop-blur-md",
+        sunset: "bg-white/20 text-white border border-white/40 hover:bg-white/30 backdrop-blur-sm shadow-lg",
+        pop: "bg-white text-black border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all",
+        wafu: "bg-[#4a4a4a] text-[#f0e6ce] border border-[#8e8e8e] hover:bg-[#5a5a5a] font-serif",
     };
 
     const currentTheme = themeClasses[theme] || themeClasses.light;
     const currentButton = buttonClasses[theme] || buttonClasses.light;
 
     return (
-        <div className={clsx("min-h-screen py-10 px-4 flex flex-col items-center transition-colors duration-500 font-sans", currentTheme, isPreview ? "min-h-[600px] rounded-xl overflow-hidden border shadow-inner" : "")}>
+        <div className={clsx("min-h-screen py-10 px-4 flex flex-col items-center transition-colors duration-500 font-sans relative", currentTheme, isPreview ? "min-h-[600px] rounded-xl overflow-hidden border shadow-inner" : "")}>
 
-            {/* Profile Header */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col items-center max-w-md w-full text-center space-y-4 mb-8"
-            >
+            {/* Background Image / Brand Pattern */}
+            {data.backgroundImage ? (
                 <div
-                    className={clsx("relative w-24 h-24 rounded-full overflow-hidden border-4 border-opacity-20 border-current shadow-xl", isEditing && "cursor-pointer hover:opacity-80 transition-opacity")}
-                    onClick={() => isEditing && fileInputRef.current?.click()}
-                >
-                    {avatar ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={avatar} alt={name} className="w-full h-full object-cover" />
-                    ) : (
-                        // Default Icon
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src="/linkonsol-icon.png" alt="Default Avatar" className="w-full h-full object-contain bg-white p-2" />
-                    )}
-                    {isEditing && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 text-white opacity-0 hover:opacity-100 transition-opacity">
-                            <span className="text-xs font-bold">Edit</span>
-                        </div>
-                    )}
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
+                    className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-100"
+                    style={{ backgroundImage: `url(${data.backgroundImage})` }}
+                />
+            ) : theme === 'brand' && (
+                <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
+                    <div
+                        className="w-full h-full bg-repeat bg-[length:100px_100px]"
+                        style={{ backgroundImage: 'url(/linkonsol-icon.png)' }}
                     />
                 </div>
+            )}
+            {/* Overlay for better text readability if bg image is present */}
+            {data.backgroundImage && <div className="absolute inset-0 z-0 bg-black/40 backdrop-blur-[2px]" />}
 
-                <div className="w-full">
-                    {isEditing ? (
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => onChange && onChange({ ...data, name: e.target.value })}
-                            className="bg-transparent text-2xl font-bold tracking-tight text-center w-full focus:outline-none focus:border-b border-current/20 pb-1 placeholder-current/50"
-                            placeholder={t.yourName}
-                        />
-                    ) : (
-                        <h1 className="text-2xl font-bold tracking-tight">{name}</h1>
-                    )}
+            <div className="relative z-10 w-full flex flex-col items-center">
 
-                    {isEditing ? (
-                        <textarea
-                            value={bio}
-                            onChange={(e) => onChange && onChange({ ...data, bio: e.target.value })}
-                            className="bg-transparent opacity-80 mt-2 text-sm leading-relaxed whitespace-pre-wrap text-center w-full focus:outline-none resize-none focus:border-b border-current/20 pb-1 scrollbar-hide placeholder-current/50"
-                            placeholder={t.bioPlaceholder}
-                            rows={3}
-                        />
-                    ) : (
-                        <p className="opacity-80 mt-2 text-sm leading-relaxed whitespace-pre-wrap">{bio}</p>
-                    )}
-                </div>
-
-                {/* Solana Badge / Wallet */}
-                {walletAddress && (
-                    <div className="flex items-center space-x-2 text-xs opacity-70 bg-opacity-10 bg-current px-3 py-1 rounded-full">
-                        <Wallet size={12} />
-                        <span>{walletAddress.slice(0, 4)}...{walletAddress.slice(-4)}</span>
+                {/* Profile Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex flex-col items-center max-w-md w-full text-center space-y-4 mb-8"
+                >
+                    <div
+                        className={clsx("relative w-24 h-24 rounded-full overflow-hidden border-4 border-opacity-20 border-current shadow-xl", isEditing && "cursor-pointer hover:opacity-80 transition-opacity")}
+                        onClick={() => isEditing && fileInputRef.current?.click()}
+                    >
+                        {avatar ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={avatar} alt={name} className="w-full h-full object-cover" />
+                        ) : (
+                            // Default Icon
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src="/linkonsol-icon.png" alt="Default Avatar" className="w-full h-full object-contain bg-white p-2" />
+                        )}
                         {isEditing && (
-                            <button onClick={() => onChange && onChange({ ...data, walletAddress: '' })} className="ml-2 hover:text-red-500">
-                                ×
-                            </button>
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/30 text-white opacity-0 hover:opacity-100 transition-opacity">
+                                <span className="text-xs font-bold">Edit</span>
+                            </div>
+                        )}
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                        />
+                    </div>
+
+                    <div className="w-full">
+                        {isEditing ? (
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => onChange && onChange({ ...data, name: e.target.value })}
+                                className="bg-transparent text-2xl font-bold tracking-tight text-center w-full focus:outline-none focus:border-b border-current/20 pb-1 placeholder-current/50"
+                                placeholder={t.yourName}
+                            />
+                        ) : (
+                            <h1 className="text-2xl font-bold tracking-tight">{name}</h1>
+                        )}
+
+                        {isEditing ? (
+                            <textarea
+                                value={bio}
+                                onChange={(e) => onChange && onChange({ ...data, bio: e.target.value })}
+                                className="bg-transparent opacity-80 mt-2 text-sm leading-relaxed whitespace-pre-wrap text-center w-full focus:outline-none resize-none focus:border-b border-current/20 pb-1 scrollbar-hide placeholder-current/50"
+                                placeholder={t.bioPlaceholder}
+                                rows={3}
+                            />
+                        ) : (
+                            <p className="opacity-80 mt-2 text-sm leading-relaxed whitespace-pre-wrap">{bio}</p>
                         )}
                     </div>
-                )}
-            </motion.div>
 
-            {/* Solana Stats (New Feature for Investors) */}
-            <div className="mb-8 w-full max-w-md flex justify-center">
-                <SolanaStats showBalance={!!walletAddress} walletAddress={walletAddress} />
-            </div>
-
-            {/* Links */}
-            <div className="w-full max-w-md space-y-4">
-                {links.filter(l => l.active).map((link, i) => {
-                    const Icon = iconMap[link.platform] || Globe;
-                    return (
-                        <motion.a
-                            key={link.id}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: i * 0.1 }}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className={clsx(
-                                "flex items-center p-4 rounded-xl w-full group relative overflow-hidden",
-                                currentButton
+                    {/* Solana Badge / Wallet */}
+                    {walletAddress && (
+                        <div className="flex items-center space-x-2 text-xs opacity-70 bg-opacity-10 bg-current px-3 py-1 rounded-full">
+                            <Wallet size={12} />
+                            <span>{walletAddress.slice(0, 4)}...{walletAddress.slice(-4)}</span>
+                            {isEditing && (
+                                <button onClick={() => onChange && onChange({ ...data, walletAddress: '' })} className="ml-2 hover:text-red-500">
+                                    ×
+                                </button>
                             )}
-                        >
-                            <div className="mr-4">
-                                <Icon size={24} />
-                            </div>
-                            <span className="font-semibold flex-grow text-center pr-8">{link.title}</span>
-                        </motion.a>
-                    );
-                })}
-            </div>
+                        </div>
+                    )}
+                </motion.div>
 
-            {/* Branding */}
-            {/* Branding & CTA for Viewers */}
-            {!isPreview && (
-                <footer className="mt-16 w-full flex flex-col items-center gap-6">
-                    <div className="text-center space-y-3">
-                        <div className="bg-gradient-to-r from-purple-900/10 to-blue-900/10 dark:from-white/5 dark:to-white/5 p-4 rounded-xl border border-white/20 dark:border-white/10 backdrop-blur-sm">
-                            <p className="font-bold text-sm mb-2">{t.ctaTitle}</p>
-                            <a
-                                href="/"
-                                className="inline-block px-4 py-2 bg-black text-white dark:bg-white dark:text-black text-xs font-bold rounded-full hover:opacity-80 transition-opacity"
+                {/* Links */}
+                <div className="w-full max-w-md space-y-4">
+                    {links.filter(l => l.active).map((link, i) => {
+                        const Icon = iconMap[link.platform] || Globe;
+                        return (
+                            <motion.a
+                                key={link.id}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: i * 0.1 }}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className={clsx(
+                                    "flex items-center p-4 rounded-xl w-full group relative overflow-hidden",
+                                    currentButton
+                                )}
                             >
-                                {t.ctaButton}
-                            </a>
-                        </div>
-                    </div>
+                                <div className="mr-4">
+                                    <Icon size={24} />
+                                </div>
+                                <span className="font-semibold flex-grow text-center pr-8">{link.title}</span>
+                            </motion.a>
+                        );
+                    })}
+                </div>
 
-                    <div className="opacity-40 text-[10px] flex flex-col items-center gap-1">
-                        <div>
-                            {t.poweredBy} <span className="font-bold">Link On Sol</span>
+                {/* Branding */}
+                {/* Branding & CTA for Viewers */}
+                {!isPreview && (
+                    <footer className="mt-16 w-full flex flex-col items-center gap-6">
+                        <div className="text-center space-y-3">
+                            <div className="bg-gradient-to-r from-purple-900/10 to-blue-900/10 dark:from-white/5 dark:to-white/5 p-4 rounded-xl border border-white/20 dark:border-white/10 backdrop-blur-sm">
+                                <p className="font-bold text-sm mb-2">{t.ctaTitle}</p>
+                                <a
+                                    href="/"
+                                    className="inline-block px-4 py-2 bg-black text-white dark:bg-white dark:text-black text-xs font-bold rounded-full hover:opacity-80 transition-opacity"
+                                >
+                                    {t.ctaButton}
+                                </a>
+                            </div>
                         </div>
-                        <div>{t.copyright}</div>
-                    </div>
-                </footer>
-            )}
+
+                        <div className="opacity-40 text-[10px] flex flex-col items-center gap-1">
+                            <div>
+                                {t.poweredBy} <span className="font-bold">LinkOn Sol</span>
+                            </div>
+                            <div>{t.copyright}</div>
+                        </div>
+                    </footer>
+                )}
+            </div>
         </div>
     );
 };

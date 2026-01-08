@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Link On Sol",
+  title: "LinkOn Sol",
   description: "Privacy-first, serverless Web3 Link in Bio on Solana.",
   robots: {
     index: false,
