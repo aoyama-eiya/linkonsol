@@ -254,6 +254,11 @@ export const ProfileView: FC<ProfileViewProps> = ({ data, isPreview = false, isE
                             <div>
                                 {t.poweredBy} <span className="font-bold">LinkOn Sol</span>
                             </div>
+                            <div className="flex gap-3">
+                                <a href="https://github.com/aoyama-eiya/linkonsol" target="_blank" rel="noopener noreferrer" className="hover:underline">{t.viewSource}</a>
+                                <span>|</span>
+                                <a href="/privacy" className="hover:underline">{t.privacyPolicy}</a>
+                            </div>
                             <div>{t.copyright}</div>
                         </div>
                     </footer>

@@ -40,6 +40,8 @@ type Translations = {
         ctaTitle: string;
         ctaButton: string;
         copyright: string;
+        privacyPolicy: string;
+        viewSource: string;
 
         // Settings
         walletConnection: string;
@@ -87,6 +89,8 @@ const translations: Translations = {
         ctaTitle: 'Create your own LinkOn Sol',
         ctaButton: 'Get Started',
         copyright: '© 2026 com.oonanji',
+        privacyPolicy: 'Privacy Policy',
+        viewSource: 'Source Code',
         walletConnection: 'Wallet Connection',
         connectWalletMsg: 'Connect a wallet to show your address on your profile.',
         syncWalletBtn: 'Sync Connected Wallet Address to Profile',
@@ -127,6 +131,8 @@ const translations: Translations = {
         ctaTitle: 'LinkOn Solでポートフォリオを作ろう！',
         ctaButton: 'はじめる',
         copyright: '© 2026 com.oonanji',
+        privacyPolicy: 'プライバシーポリシー',
+        viewSource: 'ソースコード',
         walletConnection: 'ウォレット接続',
         connectWalletMsg: 'ウォレットを接続すると、プロフィールにアドレスを表示できます。',
         syncWalletBtn: '接続中のウォレットをプロフィールに反映',
@@ -167,6 +173,8 @@ const translations: Translations = {
         ctaTitle: 'LinkOn Sol로 포트폴리오 만들기',
         ctaButton: '시작하기',
         copyright: '© 2026 com.oonanji',
+        privacyPolicy: '개인정보 처리방침',
+        viewSource: '소스 코드',
         walletConnection: '지갑 연결',
         connectWalletMsg: '지갑을 연결하여 프로필에 주소를 표시하세요.',
         syncWalletBtn: '연결된 지갑 주소를 프로필에 동기화',
@@ -207,6 +215,8 @@ const translations: Translations = {
         ctaTitle: '创建您的 LinkOn Sol',
         ctaButton: '开始',
         copyright: '© 2026 com.oonanji',
+        privacyPolicy: '隐私政策',
+        viewSource: '源代码',
         walletConnection: '钱包连接',
         connectWalletMsg: '连接钱包以在您的个人资料上显示地址。',
         syncWalletBtn: '将连接的钱包地址同步到个人资料',
