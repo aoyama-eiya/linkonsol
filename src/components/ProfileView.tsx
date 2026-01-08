@@ -116,9 +116,9 @@ export const ProfileView: FC<ProfileViewProps> = ({ data, isPreview = false, isE
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={avatar} alt={name} className="w-full h-full object-cover" />
                     ) : (
-                        <div className="w-full h-full bg-gray-200 flex items-center justify-center text-4xl font-bold opacity-50">
-                            {name.charAt(0)}
-                        </div>
+                        // Default Icon
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src="/linkonsol-icon.png" alt="Default Avatar" className="w-full h-full object-contain bg-white p-2" />
                     )}
                     {isEditing && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/30 text-white opacity-0 hover:opacity-100 transition-opacity">
