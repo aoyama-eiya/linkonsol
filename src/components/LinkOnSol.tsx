@@ -84,7 +84,7 @@ export default function LinkOnSolApp() {
             {/* Top Toolbar */}
             <div className="w-full max-w-md p-4 flex items-center justify-between z-30 sticky top-0 backdrop-blur-md bg-white/70 dark:bg-black/70 border-b border-gray-200 dark:border-zinc-800">
                 <div className="flex flex-col">
-                    <h1 className="text-lg font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-500 whitespace-nowrap">Link On Sol</h1>
+                    <h1 className="text-lg font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-500 whitespace-nowrap">LinkOn Sol</h1>
                     <div className="relative mt-1">
                         <button
                             onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
