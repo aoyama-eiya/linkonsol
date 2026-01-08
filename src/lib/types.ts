@@ -1,4 +1,4 @@
-export type SocialPlatform = 'twitter' | 'instagram' | 'github' | 'linkedin' | 'youtube' | 'twitch' | 'discord' | 'tiktok' | 'website' | 'email' | 'custom';
+export type SocialPlatform = 'twitter' | 'instagram' | 'github' | 'linkedin' | 'youtube' | 'twitch' | 'discord' | 'tiktok' | 'website' | 'email' | 'note' | 'custom';
 
 export interface LinkItem {
     id: string;

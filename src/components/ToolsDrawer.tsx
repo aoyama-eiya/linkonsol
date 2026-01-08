@@ -1,11 +1,12 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { ProfileData, LinkItem, SocialPlatform } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, Palette, Link as LinkIcon, Trash2, Settings, Globe } from "lucide-react";
+import { X, Plus, Palette, Link as LinkIcon, Trash2, Settings, Globe, Save, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 import clsx from "clsx";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import { saveProfileToChain, findProfileOnChain } from "@/lib/solana-storage";
 import {
     FaXTwitter,
     FaInstagram,
@@ -26,12 +27,58 @@ interface ToolsDrawerProps {
     onChange: (data: ProfileData) => void;
 }
 
-const platforms: SocialPlatform[] = ['twitter', 'instagram', 'github', 'linkedin', 'youtube', 'twitch', 'discord', 'tiktok', 'website', 'email'];
+const platforms: SocialPlatform[] = ['twitter', 'instagram', 'github', 'linkedin', 'youtube', 'twitch', 'discord', 'tiktok', 'website', 'email', 'note'];
 
 export const ToolsDrawer: FC<ToolsDrawerProps> = ({ isOpen, onClose, data, onChange }) => {
     const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState<'links' | 'design' | 'settings'>('links');
-    const { publicKey } = useWallet();
+    const { publicKey, signTransaction } = useWallet();
+    const { connection } = useConnection();
+    const [status, setStatus] = useState<'idle' | 'saving' | 'loading' | 'success' | 'error'>('idle');
+    const [statusMsg, setStatusMsg] = useState('');
+
+    // Clear status when tab changes or drawer closes
+    useState(() => {
+        if (!isOpen) setStatus('idle');
+    });
+
+    const handleSaveToChain = async () => {
+        if (!publicKey || !signTransaction) return;
+        setStatus('saving');
+        setStatusMsg(t.saving);
+        try {
+            await saveProfileToChain(connection, { publicKey, signTransaction } as any, data);
+            setStatus('success');
+            setStatusMsg(t.saved);
+            setTimeout(() => setStatus('idle'), 3000);
+        } catch (e: any) {
+            console.error(e);
+            setStatus('error');
+            setStatusMsg(e.message || "Failed to save");
+        }
+    };
+
+    const handleLoadFromChain = async () => {
+        if (!publicKey) return;
+        setStatus('loading');
+        setStatusMsg(t.loading);
+        try {
+            const result = await findProfileOnChain(connection, publicKey);
+            if (result) {
+                onChange(result.profile);
+                setStatus('success');
+                setStatusMsg(t.loaded);
+            } else {
+                setStatus('error');
+                setStatusMsg(t.noProfileFound);
+            }
+            setTimeout(() => setStatus('idle'), 3000);
+        } catch (e: any) {
+            console.error(e);
+            setStatus('error');
+            setStatusMsg("Failed to load");
+        }
+    };
 
     const addLink = () => {
         const newLink: LinkItem = {
@@ -210,12 +257,47 @@ export const ToolsDrawer: FC<ToolsDrawerProps> = ({ isOpen, onClose, data, onCha
                                     </div>
 
                                     {publicKey && (
-                                        <button
-                                            onClick={() => onChange({ ...data, walletAddress: publicKey.toBase58() })}
-                                            className="w-full py-4 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-xl font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-sm"
-                                        >
-                                            {t.syncWalletBtn}
-                                        </button>
+                                        <div className="space-y-3">
+                                            <button
+                                                onClick={() => onChange({ ...data, walletAddress: publicKey.toBase58() })}
+                                                className="w-full py-4 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-xl font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-sm"
+                                            >
+                                                {t.syncWalletBtn}
+                                            </button>
+
+                                            <div className="pt-6 border-t border-gray-100 dark:border-zinc-800 space-y-3">
+                                                <h3 className="text-sm font-bold opacity-70 mb-2">Blockchain Storage</h3>
+                                                <p className="text-xs opacity-50 mb-3">{t.storageDescription}</p>
+
+                                                <button
+                                                    onClick={handleSaveToChain}
+                                                    disabled={status === 'saving' || status === 'loading'}
+                                                    className="w-full py-4 bg-black text-white dark:bg-white dark:text-black rounded-xl font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    {status === 'saving' ? (
+                                                        <div className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full" />
+                                                    ) : <Save size={16} />}
+                                                    {status === 'saving' ? t.saving : t.saveToChain}
+                                                </button>
+
+                                                <button
+                                                    onClick={handleLoadFromChain}
+                                                    disabled={status === 'saving' || status === 'loading'}
+                                                    className="w-full py-4 border border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-400 rounded-xl font-bold text-sm hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    {status === 'loading' ? (
+                                                        <div className="animate-spin w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+                                                    ) : <RefreshCw size={16} />}
+                                                    {status === 'loading' ? t.loading : t.loadFromChain}
+                                                </button>
+
+                                                {status !== 'idle' && statusMsg && (
+                                                    <div className={clsx("text-center text-xs font-bold p-2 rounded", status === 'error' ? "text-red-500 bg-red-50 dark:bg-red-900/10" : "text-green-500 bg-green-50 dark:bg-green-900/10")}>
+                                                        {statusMsg}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
                             )}

@@ -16,8 +16,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LinkOnSol | Solana Link in Bio",
-  description: "The minimalist, privacy-focused portfolio builder for Solana.",
+  title: "Link On Sol",
+  description: "Privacy-first, serverless Web3 Link in Bio on Solana.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 

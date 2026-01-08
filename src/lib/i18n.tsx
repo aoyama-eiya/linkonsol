@@ -45,6 +45,16 @@ type Translations = {
         walletConnection: string;
         connectWalletMsg: string;
         syncWalletBtn: string;
+
+        // Storage
+        saveToChain: string;
+        loadFromChain: string;
+        saving: string;
+        loading: string;
+        saved: string;
+        loaded: string;
+        noProfileFound: string;
+        storageDescription: string;
     }
 };
 
@@ -80,6 +90,14 @@ const translations: Translations = {
         walletConnection: 'Wallet Connection',
         connectWalletMsg: 'Connect a wallet to show your address on your profile.',
         syncWalletBtn: 'Sync Connected Wallet Address to Profile',
+        saveToChain: 'Save to Blockchain',
+        loadFromChain: 'Load from Blockchain',
+        saving: 'Saving...',
+        loading: 'Scanning...',
+        saved: 'Saved!',
+        loaded: 'Loaded!',
+        noProfileFound: 'No profile found in recent history.',
+        storageDescription: 'Save your profile permanently on Solana. Small gas fee applies.',
     },
     ja: {
         profile: 'プロフィール',
@@ -112,6 +130,14 @@ const translations: Translations = {
         walletConnection: 'ウォレット接続',
         connectWalletMsg: 'ウォレットを接続すると、プロフィールにアドレスを表示できます。',
         syncWalletBtn: '接続中のウォレットをプロフィールに反映',
+        saveToChain: 'ブロックチェーンに保存',
+        loadFromChain: 'ブロックチェーンから読み込み',
+        saving: '保存中...',
+        loading: 'スキャン中...',
+        saved: '保存完了！',
+        loaded: '読み込み完了！',
+        noProfileFound: '保存されたプロフィールが見つかりませんでした。',
+        storageDescription: 'Solanaブロックチェーン上にプロフィールを永続保存します。（少額のガス代がかかります）',
     },
     ko: {
         profile: '프로필',
@@ -144,6 +170,14 @@ const translations: Translations = {
         walletConnection: '지갑 연결',
         connectWalletMsg: '지갑을 연결하여 프로필에 주소를 표시하세요.',
         syncWalletBtn: '연결된 지갑 주소를 프로필에 동기화',
+        saveToChain: '블록체인에 저장',
+        loadFromChain: '블록체인에서 불러오기',
+        saving: '저장 중...',
+        loading: '스캔 중...',
+        saved: '저장 완료!',
+        loaded: '로드 완료!',
+        noProfileFound: '저장된 프로필을 찾을 수 없습니다.',
+        storageDescription: 'Solana 블록체인에 프로필을 영구 저장합니다. (소액의 가스비 발생)',
     },
     zh: {
         profile: '个人资料',
@@ -176,6 +210,14 @@ const translations: Translations = {
         walletConnection: '钱包连接',
         connectWalletMsg: '连接钱包以在您的个人资料上显示地址。',
         syncWalletBtn: '将连接的钱包地址同步到个人资料',
+        saveToChain: '保存到区块链',
+        loadFromChain: '从区块链加载',
+        saving: '保存中...',
+        loading: '扫描中...',
+        saved: '已保存！',
+        loaded: '已加载！',
+        noProfileFound: '未找到保存的个人资料。',
+        storageDescription: '将您的个人资料永久保存在 Solana 区块链上。（需少量 Gas 费）',
     }
 };
 

@@ -27,6 +27,7 @@ import {
     FaGlobe,
     FaEnvelope
 } from "react-icons/fa6";
+import { SiNote } from "react-icons/si";
 import clsx from "clsx";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useLanguage } from "@/lib/i18n";
@@ -45,6 +46,7 @@ const iconMap: Record<string, any> = {
     tiktok: FaTiktok,
     website: FaGlobe,
     email: FaEnvelope,
+    note: SiNote,
     custom: FaGlobe,
 };
 
