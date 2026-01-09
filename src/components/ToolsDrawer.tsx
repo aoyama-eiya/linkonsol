@@ -32,7 +32,7 @@ const platforms: SocialPlatform[] = ['twitter', 'instagram', 'github', 'linkedin
 export const ToolsDrawer: FC<ToolsDrawerProps> = ({ isOpen, onClose, data, onChange }) => {
     const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState<'links' | 'design' | 'settings'>('links');
-    const { publicKey, signTransaction } = useWallet();
+    const { publicKey, sendTransaction } = useWallet();
     const { connection } = useConnection();
     const [status, setStatus] = useState<'idle' | 'saving' | 'loading' | 'success' | 'error'>('idle');
     const [statusMsg, setStatusMsg] = useState('');
@@ -43,11 +43,11 @@ export const ToolsDrawer: FC<ToolsDrawerProps> = ({ isOpen, onClose, data, onCha
     });
 
     const handleSaveToChain = async () => {
-        if (!publicKey || !signTransaction) return;
+        if (!publicKey || !sendTransaction) return;
         setStatus('saving');
         setStatusMsg(t.saving);
         try {
-            await saveProfileToChain(connection, { publicKey, signTransaction } as any, data);
+            await saveProfileToChain(connection, { publicKey, sendTransaction } as any, data);
             setStatus('success');
             setStatusMsg(t.saved);
             setTimeout(() => setStatus('idle'), 3000);
