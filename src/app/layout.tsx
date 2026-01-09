@@ -18,6 +18,20 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "LinkOn Sol",
   description: "Privacy-first, serverless Web3 Link in Bio on Solana.",
+  metadataBase: new URL("https://aoyama-eiya.github.io/linkonsol"),
+  openGraph: {
+    title: "LinkOn Sol",
+    description: "Privacy-first, serverless Web3 Link in Bio on Solana.",
+    url: "https://aoyama-eiya.github.io/linkonsol",
+    siteName: "LinkOn Sol",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LinkOn Sol",
+    description: "Privacy-first, serverless Web3 Link in Bio on Solana.",
+  },
   robots: {
     index: false,
     follow: false,
