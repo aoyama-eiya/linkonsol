@@ -11,7 +11,7 @@ export const saveProfileToChain = async (
     wallet: WalletContextState,
     profile: ProfileData
 ): Promise<string> => {
-    if (!wallet.publicKey || !wallet.signTransaction) throw new Error("Wallet not connected");
+    if (!wallet.publicKey || !wallet.sendTransaction) throw new Error("Wallet not connected");
 
     const encoded = encodeProfile(profile);
     const memoContent = `${PREFIX}${encoded}`;
