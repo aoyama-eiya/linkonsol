@@ -111,6 +111,15 @@ export const ProfileView: FC<ProfileViewProps> = ({ data, isPreview = false, isE
     const currentTheme = themeClasses[theme] || themeClasses.light;
     const currentButton = buttonClasses[theme] || buttonClasses.light;
 
+    // Helper for handling basePath on GitHub Pages
+    const basePath = '/linkonsol';
+    const getPath = (path: string) => {
+        if (path.startsWith('http') || path.startsWith('data:')) return path;
+        // Ensure path starts with / if not present
+        const cleanPath = path.startsWith('/') ? path : `/${path}`;
+        return `${basePath}${cleanPath}`;
+    };
+
     return (
         <div className={clsx("min-h-screen py-10 px-4 flex flex-col items-center transition-colors duration-500 font-sans relative", currentTheme, isPreview ? "min-h-[600px] rounded-xl overflow-hidden border shadow-inner" : "")}>
 
@@ -124,7 +133,7 @@ export const ProfileView: FC<ProfileViewProps> = ({ data, isPreview = false, isE
                 <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
                     <div
                         className="w-full h-full bg-repeat bg-[length:100px_100px]"
-                        style={{ backgroundImage: 'url(/linkonsol-icon.png)' }}
+                        style={{ backgroundImage: `url(${getPath('/linkonsol-icon.png')})` }}
                     />
                 </div>
             )}
@@ -149,7 +158,7 @@ export const ProfileView: FC<ProfileViewProps> = ({ data, isPreview = false, isE
                         ) : (
                             // Default Icon
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img src="/linkonsol-icon.png" alt="Default Avatar" className="w-full h-full object-contain bg-white p-2" />
+                            <img src={getPath('/linkonsol-icon.png')} alt="Default Avatar" className="w-full h-full object-contain bg-white p-2" />
                         )}
                         {isEditing && (
                             <div className="absolute inset-0 flex items-center justify-center bg-black/30 text-white opacity-0 hover:opacity-100 transition-opacity">
@@ -242,7 +251,7 @@ export const ProfileView: FC<ProfileViewProps> = ({ data, isPreview = false, isE
                             <div className="bg-gradient-to-r from-purple-900/10 to-blue-900/10 dark:from-white/5 dark:to-white/5 p-4 rounded-xl border border-white/20 dark:border-white/10 backdrop-blur-sm">
                                 <p className="font-bold text-sm mb-2">{t.ctaTitle}</p>
                                 <a
-                                    href="/"
+                                    href={getPath('/')}
                                     className="inline-block px-4 py-2 bg-black text-white dark:bg-white dark:text-black text-xs font-bold rounded-full hover:opacity-80 transition-opacity"
                                 >
                                     {t.ctaButton}
@@ -271,7 +280,7 @@ export const ProfileView: FC<ProfileViewProps> = ({ data, isPreview = false, isE
                             <div className="flex gap-3">
                                 <a href="https://github.com/aoyama-eiya/linkonsol" target="_blank" rel="noopener noreferrer" className="hover:underline">{t.viewSource}</a>
                                 <span>|</span>
-                                <a href="/privacy" className="hover:underline">{t.privacyPolicy}</a>
+                                <a href={getPath('/privacy')} className="hover:underline">{t.privacyPolicy}</a>
                             </div>
                             <div>{t.copyright}</div>
                         </div>
