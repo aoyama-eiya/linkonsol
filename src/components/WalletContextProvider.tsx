@@ -21,8 +21,8 @@ export const WalletContextProvider: FC<{ children: ReactNode }> = ({
     const network = WalletAdapterNetwork.Mainnet;
 
     // You can also provide a custom RPC endpoint.
-    // Using Ankr public RPC as mainnet-beta often returns 403/Rate Limit
-    const endpoint = "https://rpc.ankr.com/solana";
+    // Using extrnode public load balancer for better reliability on Mainnet
+    const endpoint = "https://solana-mainnet.rpc.extrnode.com";
 
     const wallets = useMemo(
         () => [new PhantomWalletAdapter()],
