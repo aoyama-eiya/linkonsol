@@ -320,6 +320,32 @@ export const ToolsDrawer: FC<ToolsDrawerProps> = ({ isOpen, onClose, data, onCha
                                         <p className="text-xs opacity-60 leading-relaxed text-center">{t.connectWalletMsg}</p>
                                     </div>
 
+                                    {/* RPC Settings */}
+                                    <div className="bg-gray-50 dark:bg-zinc-800 p-6 rounded-2xl space-y-4 border border-gray-100 dark:border-zinc-700">
+                                        <h3 className="text-sm font-bold opacity-70 mb-2">RPC Endpoint</h3>
+                                        <p className="text-xs opacity-50 mb-2">
+                                            If you encounter 403 errors, please use your own RPC URL (e.g. from Helius, QuickNode).
+                                        </p>
+                                        <input
+                                            type="text"
+                                            placeholder="https://mainnet.helius-rpc.com/..."
+                                            className="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 rounded-lg p-3 text-xs outline-none focus:border-purple-500"
+                                            defaultValue={typeof window !== 'undefined' ? localStorage.getItem('linkonsol_rpc') || '' : ''}
+                                            onBlur={(e) => {
+                                                const val = e.target.value.trim();
+                                                if (val) {
+                                                    localStorage.setItem('linkonsol_rpc', val);
+                                                } else {
+                                                    localStorage.removeItem('linkonsol_rpc');
+                                                }
+                                                // Reload to apply changes (simplest way)
+                                                if (window.confirm("Reload page to apply new RPC?")) {
+                                                    window.location.reload();
+                                                }
+                                            }}
+                                        />
+                                    </div>
+
                                     {publicKey && (
                                         <div className="space-y-3">
                                             <button

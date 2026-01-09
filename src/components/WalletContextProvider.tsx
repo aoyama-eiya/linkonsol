@@ -20,9 +20,17 @@ export const WalletContextProvider: FC<{ children: ReactNode }> = ({
     // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
     const network = WalletAdapterNetwork.Mainnet;
 
-    // You can also provide a custom RPC endpoint.
-    // Using extrnode public load balancer for better reliability on Mainnet
-    const endpoint = "https://solana-mainnet.rpc.extrnode.com";
+    // Default to a public RPC, but allow user override from localStorage if available (client-side only)
+    const [customEndpoint, setCustomEndpoint] = useMemo(() => {
+        if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('linkonsol_rpc');
+            if (stored) return [stored, () => { }];
+        }
+        // Fallback to a generally available public RPC (limitations apply) or the user's custom one
+        return ["https://api.mainnet-beta.solana.com", () => { }];
+    }, []);
+
+    const endpoint = customEndpoint;
 
     const wallets = useMemo(
         () => [new PhantomWalletAdapter()],
