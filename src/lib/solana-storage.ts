@@ -66,7 +66,19 @@ export const saveProfileToChain = async (
     transaction.feePayer = wallet.publicKey;
 
     const signature = await wallet.sendTransaction(transaction, connection);
-    await connection.confirmTransaction(signature, 'confirmed');
+
+    // Attempt to confirm, but don't block/fail hard if it times out
+    try {
+        const latestBlockhash = await connection.getLatestBlockhash();
+        await connection.confirmTransaction({
+            signature,
+            blockhash: latestBlockhash.blockhash,
+            lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
+        }, 'confirmed');
+    } catch (e) {
+        console.warn("Transaction confirmation timed out or failed, but signature was sent:", signature);
+        // We still return signature as it might have succeeded
+    }
 
     return signature;
 };
