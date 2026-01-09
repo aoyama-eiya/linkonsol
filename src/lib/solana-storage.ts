@@ -17,8 +17,33 @@ export const saveProfileToChain = async (
     const memoContent = `${PREFIX}${encoded}`;
 
     // Check size limit (approx 1KB safe limit for memo)
-    if (new TextEncoder().encode(memoContent).length > 1000) {
-        throw new Error("Profile data is too large to save on-chain. Try reducing bio length or number of links.");
+    // If too large, try to strip heavy fields (avatar, background) automatically
+    let finalDetails = memoContent;
+    const size = new TextEncoder().encode(memoContent).length;
+
+    if (size > 900) {
+        console.warn(`Profile too large (${size} bytes). Attempting to optimize...`);
+        // Try removing avatar
+        const noAvatar = { ...profile, avatar: '' };
+        const encodedNoAvatar = encodeProfile(noAvatar);
+        const contentNoAvatar = `${PREFIX}${encodedNoAvatar}`;
+
+        if (new TextEncoder().encode(contentNoAvatar).length <= 900) {
+            finalDetails = contentNoAvatar;
+            console.log("Optimized by removing avatar.");
+        } else {
+            // Try removing background too
+            const noBg = { ...noAvatar, backgroundImage: '' };
+            const encodedNoBg = encodeProfile(noBg);
+            const contentNoBg = `${PREFIX}${encodedNoBg}`;
+
+            if (new TextEncoder().encode(contentNoBg).length <= 900) {
+                finalDetails = contentNoBg;
+                console.log("Optimized by removing avatar and background.");
+            } else {
+                throw new Error(`Profile data is still too large (${new TextEncoder().encode(contentNoBg).length} bytes) even after removing images. Please shorten your bio.`);
+            }
+        }
     }
 
     const transaction = new Transaction();
@@ -28,7 +53,7 @@ export const saveProfileToChain = async (
         new TransactionInstruction({
             keys: [{ pubkey: wallet.publicKey, isSigner: true, isWritable: true }],
             programId: MEMO_PROGRAM_ID,
-            data: Buffer.from(memoContent, "utf-8"),
+            data: Buffer.from(finalDetails, "utf-8"),
         })
     );
 
