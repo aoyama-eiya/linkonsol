@@ -165,3 +165,36 @@ export const findProfileOnChain = async (
 
     return null;
 };
+
+export const fetchProfileByTx = async (
+    connection: Connection,
+    signature: string
+): Promise<ProfileData | null> => {
+    try {
+        const tx = await connection.getParsedTransaction(signature, {
+            maxSupportedTransactionVersion: 0,
+            commitment: 'confirmed'
+        });
+
+        if (!tx || !tx.transaction) return null;
+
+        const instructions = tx.transaction.message.instructions;
+
+        for (const ix of instructions) {
+            if (ix.programId.toString() === MEMO_PROGRAM_ID.toString()) {
+                // @ts-ignore
+                if (ix.parsed && typeof ix.parsed === 'string') {
+                    // @ts-ignore
+                    const content = ix.parsed as string;
+                    if (content.startsWith(PREFIX)) {
+                        const encoded = content.substring(PREFIX.length);
+                        return decodeProfile(encoded);
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.error("Failed to fetch profile by tx", e);
+    }
+    return null;
+};

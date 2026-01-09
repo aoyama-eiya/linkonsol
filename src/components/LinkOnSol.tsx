@@ -13,12 +13,15 @@ import { useLanguage, Language } from '@/lib/i18n';
 import { ToolsDrawer } from './ToolsDrawer';
 
 
-import { useWallet } from '@solana/wallet-adapter-react';
+import { fetchProfileByTx } from '@/lib/solana-storage';
+import { useConnection } from '@solana/wallet-adapter-react';
 
 export default function LinkOnSolApp() {
     const { publicKey } = useWallet();
+    const { connection } = useConnection();
     const searchParams = useSearchParams();
     const d = searchParams.get('d');
+    const tx = searchParams.get('tx');
 
     const [profile, setProfile] = useState<ProfileData>(initialProfile);
     const [mode, setMode] = useState<'edit' | 'view'>('edit');
@@ -26,23 +29,36 @@ export default function LinkOnSolApp() {
     const { language, setLanguage, t } = useLanguage();
     const [isToolsOpen, setIsToolsOpen] = useState(false);
     const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+    const [lastSavedTx, setLastSavedTx] = useState<string | null>(null);
 
     useEffect(() => {
-        if (d) {
-            const decoded = decodeProfile(d);
-            if (decoded) {
-                setProfile(decoded);
-                setMode('view');
+        const loadProfile = async () => {
+            if (tx) {
+                // Load from Transaction ID (Short URL)
+                const fetched = await fetchProfileByTx(connection, tx);
+                if (fetched) {
+                    setProfile(fetched);
+                    setMode('view');
+                    setLastSavedTx(tx);
+                }
+            } else if (d) {
+                // Load from Data String (Long URL)
+                const decoded = decodeProfile(d);
+                if (decoded) {
+                    setProfile(decoded);
+                    setMode('view');
+                }
+            } else {
+                const saved = localStorage.getItem('linkonsol_draft');
+                if (saved) {
+                    try {
+                        setProfile(JSON.parse(saved));
+                    } catch { }
+                }
             }
-        } else {
-            const saved = localStorage.getItem('linkonsol_draft');
-            if (saved) {
-                try {
-                    setProfile(JSON.parse(saved));
-                } catch { }
-            }
-        }
-    }, [d]);
+        };
+        loadProfile();
+    }, [d, tx, connection]);
 
     useEffect(() => {
         if (mode === 'edit') {
@@ -55,13 +71,19 @@ export default function LinkOnSolApp() {
     useEffect(() => {
         // Hydration fix: only run on client
         if (typeof window !== 'undefined') {
-            const encoded = encodeProfile(profile);
-            // Ensure we use the correct base path for GitHub Pages
             const baseUrl = window.location.href.split('?')[0];
             const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-            setShareUrl(`${cleanBaseUrl}?d=${encoded}`);
+
+            if (lastSavedTx) {
+                // Use Short URL if we have a transaction signature
+                setShareUrl(`${cleanBaseUrl}?tx=${lastSavedTx}`);
+            } else {
+                // Fallback to Long URL
+                const encoded = encodeProfile(profile);
+                setShareUrl(`${cleanBaseUrl}?d=${encoded}`);
+            }
         }
-    }, [profile]);
+    }, [profile, lastSavedTx]);
 
     const copyLink = () => {
         if (!shareUrl) return;
@@ -127,7 +149,7 @@ export default function LinkOnSolApp() {
 
                 <div className="flex items-center gap-3">
                     {/* Show Edit button ONLY if it's a local draft OR if wallet matches profile address */}
-                    {(!d || (d && publicKey && profile.walletAddress === publicKey.toBase58())) && (
+                    {(!d && !tx || ((d || tx) && publicKey && profile.walletAddress === publicKey.toBase58())) && (
                         <button
                             onClick={toggleMode}
                             className={clsx(
@@ -149,7 +171,7 @@ export default function LinkOnSolApp() {
                         </button>
                     )}
 
-                    {!d && (
+                    {!d && !tx && (
                         <button
                             onClick={copyLink}
                             className={clsx(
@@ -169,7 +191,11 @@ export default function LinkOnSolApp() {
                 <ProfileView
                     data={profile}
                     isEditing={mode === 'edit'}
-                    onChange={setProfile}
+                    onChange={(newProfile) => {
+                        setProfile(newProfile);
+                        // If user edits, the last saved tx is no longer valid for the current state
+                        setLastSavedTx(null);
+                    }}
                     isPreview={false}
                 />
             </div>
@@ -198,7 +224,11 @@ export default function LinkOnSolApp() {
                 isOpen={isToolsOpen}
                 onClose={() => setIsToolsOpen(false)}
                 data={profile}
-                onChange={setProfile}
+                onChange={(newProfile) => {
+                    setProfile(newProfile);
+                    setLastSavedTx(null);
+                }}
+                onSaved={(signature) => setLastSavedTx(signature)}
             />
 
         </div>

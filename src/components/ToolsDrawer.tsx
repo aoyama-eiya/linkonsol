@@ -25,11 +25,12 @@ interface ToolsDrawerProps {
     onClose: () => void;
     data: ProfileData;
     onChange: (data: ProfileData) => void;
+    onSaved?: (signature: string) => void;
 }
 
 const platforms: SocialPlatform[] = ['twitter', 'instagram', 'github', 'linkedin', 'youtube', 'twitch', 'discord', 'tiktok', 'website', 'email', 'note'];
 
-export const ToolsDrawer: FC<ToolsDrawerProps> = ({ isOpen, onClose, data, onChange }) => {
+export const ToolsDrawer: FC<ToolsDrawerProps> = ({ isOpen, onClose, data, onChange, onSaved }) => {
     const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState<'links' | 'design' | 'settings'>('links');
     const { publicKey, sendTransaction } = useWallet();
@@ -47,9 +48,10 @@ export const ToolsDrawer: FC<ToolsDrawerProps> = ({ isOpen, onClose, data, onCha
         setStatus('saving');
         setStatusMsg(t.saving);
         try {
-            await saveProfileToChain(connection, { publicKey, sendTransaction } as any, data);
+            const signature = await saveProfileToChain(connection, { publicKey, sendTransaction } as any, data);
             setStatus('success');
             setStatusMsg(t.saved);
+            if (onSaved) onSaved(signature);
             setTimeout(() => setStatus('idle'), 3000);
         } catch (e: any) {
             console.error(e);
