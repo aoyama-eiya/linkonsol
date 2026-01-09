@@ -56,7 +56,10 @@ export default function LinkOnSolApp() {
         // Hydration fix: only run on client
         if (typeof window !== 'undefined') {
             const encoded = encodeProfile(profile);
-            setShareUrl(`${window.location.origin}?d=${encoded}`);
+            // Ensure we use the correct base path for GitHub Pages
+            const baseUrl = window.location.href.split('?')[0];
+            const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+            setShareUrl(`${cleanBaseUrl}?d=${encoded}`);
         }
     }, [profile]);
 
