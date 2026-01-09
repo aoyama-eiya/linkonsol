@@ -26,11 +26,13 @@ export const metadata: Metadata = {
     siteName: "LinkOn Sol",
     locale: "en_US",
     type: "website",
+    images: ["https://aoyama-eiya.github.io/linkonsol/ogp.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "LinkOn Sol",
     description: "Privacy-first, serverless Web3 Link in Bio on Solana.",
+    images: ["https://aoyama-eiya.github.io/linkonsol/ogp.png"],
   },
   robots: {
     index: false,
