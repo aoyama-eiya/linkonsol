@@ -26,6 +26,10 @@ export const WalletContextProvider: FC<{ children: ReactNode }> = ({
             const stored = localStorage.getItem('linkonsol_rpc');
             if (stored) return [stored, () => { }];
         }
+        // Check for environment variable
+        if (process.env.NEXT_PUBLIC_RPC_URL) {
+            return [process.env.NEXT_PUBLIC_RPC_URL, () => { }];
+        }
         // Fallback to a generally available public RPC (limitations apply) or the user's custom one
         return ["https://api.mainnet-beta.solana.com", () => { }];
     }, []);
