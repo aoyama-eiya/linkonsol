@@ -200,18 +200,6 @@ export const ProfileView: FC<ProfileViewProps> = ({ data, isPreview = false, isE
                         )}
                     </div>
 
-                    {/* Solana Badge / Wallet */}
-                    {walletAddress && (
-                        <div className="flex items-center space-x-2 text-xs opacity-70 bg-opacity-10 bg-current px-3 py-1 rounded-full">
-                            <Wallet size={12} />
-                            <span>{walletAddress.slice(0, 4)}...{walletAddress.slice(-4)}</span>
-                            {isEditing && (
-                                <button onClick={() => onChange && onChange({ ...data, walletAddress: '' })} className="ml-2 hover:text-red-500">
-                                    ×
-                                </button>
-                            )}
-                        </div>
-                    )}
                 </motion.div>
 
                 {/* Links */}
