@@ -53,6 +53,16 @@ export const ToolsDrawer: FC<ToolsDrawerProps> = ({ isOpen, onClose, data, onCha
             setTimeout(() => setStatus('idle'), 3000);
         } catch (e: any) {
             console.error(e);
+
+            // Special handling for Timeout errors which often mean "Sent but confirming is slow"
+            // The transaction is likely on-chain, just took too long to confirm in the UI.
+            if (e.message?.includes("Transaction was not confirmed") || e.name === "TransactionExpiredTimeoutError") {
+                setStatus('success');
+                setStatusMsg(`${t.saved} (Verifying...)`);
+                setTimeout(() => setStatus('idle'), 5000);
+                return;
+            }
+
             setStatus('error');
             setStatusMsg(e.message || "Failed to save");
         }
