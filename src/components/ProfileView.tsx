@@ -249,10 +249,10 @@ export const ProfileView: FC<ProfileViewProps> = ({ data, isPreview = false, isE
 
                         {/* Orynth Badge */}
                         <div className="mb-2">
-                            <a href="https://orynth.dev/projects/linkon-sol" target="_blank" rel="noopener noreferrer">
+                            <a href="https://orynth.dev/projects/linkon-sol-9598" target="_blank" rel="noopener noreferrer">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
-                                    src={`https://orynth.dev/api/badge/linkon-sol?theme=${['dark', 'midnight', 'solana', 'space_1', 'space_2', 'synthwave', 'wafu', 'sunset', 'bubblegum'].includes(theme) ? 'dark' : 'light'}&style=default`}
+                                    src={`https://orynth.dev/api/badge/linkon-sol-9598?theme=${['dark', 'midnight', 'solana', 'space_1', 'space_2', 'synthwave', 'wafu', 'sunset', 'bubblegum'].includes(theme) ? 'dark' : 'light'}&style=default`}
                                     alt="Featured on Orynth"
                                     width={260}
                                     height={80}

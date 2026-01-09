@@ -14,7 +14,7 @@ import { ToolsDrawer } from './ToolsDrawer';
 
 
 import { fetchProfileByTx } from '@/lib/solana-storage';
-import { useConnection } from '@solana/wallet-adapter-react';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 
 export default function LinkOnSolApp() {
     const { publicKey } = useWallet();
