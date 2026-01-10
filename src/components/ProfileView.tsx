@@ -112,7 +112,7 @@ export const ProfileView: FC<ProfileViewProps> = ({ data, isPreview = false, isE
     const currentButton = buttonClasses[theme] || buttonClasses.light;
 
     // Helper for handling basePath on GitHub Pages
-    const basePath = '/linkonsol';
+    const basePath = '';
     const getPath = (path: string) => {
         if (path.startsWith('http') || path.startsWith('data:')) return path;
         // Ensure path starts with / if not present

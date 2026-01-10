@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: '/linkonsol',
+  // basePath: '/linkonsol',
   reactCompiler: true,
 };
 
